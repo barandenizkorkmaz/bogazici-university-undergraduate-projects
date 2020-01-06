@@ -4,8 +4,8 @@ This repository includes my undergraduate projects at Boğaziçi University.
 
 ### [CMPE230 - Systems Programming](/CMPE230)
 - [Project 1](/CMPE230/Project1) `C++`
-- [Project 2](/CMPE230/project2) `Python 3`
-- [Project 3](/CMPE230/project3) `Qt / C++`
+- [Project 2](/CMPE230/Project2) `Python 3`
+- [Project 3](/CMPE230/Project3) `Qt / C++`
 
 ### [CMPE250 - Data Structures and Algorithms](/CMPE250)
 - [Project 1](/CMPE250/Project1) `C++`
@@ -27,7 +27,7 @@ This repository includes my undergraduate projects at Boğaziçi University.
 
 ### [CMPE322 - Operating Systems](/cmpe322)
 - [Project 1](/CMPE322/Project1) `C++`
-- [Project 2](/CMPE322/project2) `C++`
+- [Project 2](/CMPE322/Project2) `C++`
 
 ### [CMPE362 - Signal Processing](/cmpe362)
 - [Project 1](/CMPE362/Project1) `Matlab`
