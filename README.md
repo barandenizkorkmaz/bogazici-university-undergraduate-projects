@@ -1,4 +1,4 @@
-# BogaziciUniversityUndergraduateProjects
+# Boğaziçi University Undergraduate Projects
 ### :star: Please give a star and support my work on GitHub.
 This repository includes my undergraduate projects at Boğaziçi University.
 
