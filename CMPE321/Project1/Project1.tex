@@ -1,0 +1,610 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{algorithm}
+\usepackage{algpseudocode, float}
+\usepackage{lipsum}
+\usepackage[T1]{fontenc}
+\usepackage{tabto}
+\usepackage[english]{babel}
+\usepackage{algorithm}
+\usepackage{algorithm2e}
+\usepackage{hyperref}
+\usepackage{float}
+\makeatletter
+\newenvironment{breakablealgorithm}
+  {% \begin{breakablealgorithm}
+   \begin{center}
+     \refstepcounter{algorithm}% New algorithm
+     \hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+     \renewcommand{\caption}[2][\relax]{% Make a new \caption
+       {\raggedright\textbf{\ALG@name~\thealgorithm} ##2\par}%
+       \ifx\relax##1\relax % #1 is \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+       \else % #1 is not \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+       \fi
+       \kern2pt\hrule\kern2pt
+     }
+  }{% \end{breakablealgorithm}
+     \kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+   \end{center}
+  }
+\makeatother
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+	
+	\scshape
+	
+	\vspace*{6\baselineskip}
+	
+	{\scshape\Large BOĞAZİÇİ UNİVERSİTY\\} % Editor list
+	
+	\vspace*{4\baselineskip}
+	
+	
+	\rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt}
+	\rule{\textwidth}{0.4pt}
+	
+	\vspace{0.5\baselineskip}
+	
+	{\LARGE CMPE 321\\ DATABASE SYSTEMS\\} % Title
+	
+	\vspace{0.75\baselineskip} % Whitespace below the title
+	
+	\rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt} % Thin horizontal rule
+	\rule{\textwidth}{1.6pt} % Thick horizontal rule
+	
+	\vspace{2\baselineskip} % Whitespace after the title block
+	
+	%------------------------------------------------
+	%	Subtitle
+	%------------------------------------------------
+	
+	STORAGE MANAGER DESIGN % Subtitle or further description
+	
+	\vspace*{1\baselineskip} % Whitespace under the subtitle
+	
+	%------------------------------------------------
+	%	Editor(s)
+	%------------------------------------------------
+	
+	PROJECT 1
+	
+	\vspace{3\baselineskip} % Whitespace before the editors
+	
+	{\scshape\Large Baran Deniz KORKMAZ\\} % Editor list
+	{\scshape\Large 2015400183\\} % Editor list
+	
+	\vspace{6\baselineskip} % Whitespace below the editor list
+	\textsc{\large SUMMER 19'}
+
+
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+\section{\large Introduction}
+In the first project of the course, we are asked to design a storage manager which will be implemented later in the following projects. A storage manager is a system which is responsible from the definition and the manipulation of the data and the data storage inside the memory.
+The project report consists of the assumptions and constraints for the storage manager, the properties and the relations of the storage structures, and the DDL \& DML operations that are supported by the storage manager.
+
+\clearpage
+
+\section{\large Assumptions \& Constraints}
+\subsection{Assumptions}
+\subsubsection{\small Base Assumptions}
+\tab This subsection contains the base assumptions that are already mentioned in the project description.
+\begin{itemize}
+    \item Page Size = 1936 Bytes
+    \item File Size = 38748 Bytes
+    \item The content of the File Header:
+        \begin{itemize}
+            \item File Name
+            \item Type Name
+            \item \# of Pages
+            \item \# of Free Bytes
+            \item Pointer to the Next File
+            \item Pointer to the First Page
+        \end{itemize}
+    \item The content of the Page Header:
+        \begin{itemize}
+            \item Page Id
+            \item \# of Pages
+            \item \# of Free Bytes
+            \item Pointer to the Next Page
+            \item Pointer to the First Record
+        \end{itemize}
+    \item The content of the Record Header:
+        \begin{itemize}
+            \item Type Name
+            \item Primary Key (Record ID)
+            \item \# of Fields
+            \item Pointer to the Next Record
+            \item \# of Free Bytes
+        \end{itemize}
+    \item Maximum number of fields a type can have = 10
+    \item Maximum length of a type name = 16 characters
+    \item Maximum length of a field name = 16 characters
+    \item User always enters valid input.
+    \item All fields shall be integers. However, type and field names shall be alphanumeric.
+    \item A disk manager already exists that is able to fetch the necessary pages when addressed.
+    \end{itemize}
+    \subsubsection{Extra Assumptions}
+    \tab This subsection contains the additional assumptions that are determined by the assignee of the project.
+    \begin{itemize}
+    \item The contents of the fields are no larger than 4 Bytes.
+    
+\end{itemize}
+
+\subsection{Constraints}
+\subsubsection{Base Constraints}
+\tab This subsection contains the base constraints that are already mentioned in the project description.
+\begin{itemize}
+    \item The data must be organized in the pages and pages must contain records.
+    \item Storing all pages in the same file is not allowed. Plus, a file must contain multiple pages.
+    \item Although a file contains multiple pages, it must read page by page when it is deleted. Loading the whole file to RAM is not allowed.
+\end{itemize}
+
+\subsubsection{Extra Constraints}
+\tab This subsection contains the additional constraints that are determined by the assignee of the project.
+\begin{itemize}
+    \item Two records with the same primary key values cannot be created.
+    \item A file contains the records of only one type.
+    \item Every record has a unique primary key (record id).
+    \item Every page within the same file has a unique page id.
+    \item Every file has a unique file name.
+    \item If the user creates a new type, the file name will be in the form of "typeName1.txt". In case of the lack of free space in the file holding the type, the new file that will contain new records of the same type will be named in the form of "typeName2.txt" and this procedure will apply for the next file creations of the same type.
+    \item The sizes of the files,pages,and records are fixed.
+\end{itemize}
+
+
+\section{\large Storage Structures}
+\tab The system has is composed of two primary storage structures that are the system catalogue which contains the metadata about the actual data, and the data storage structures that contains the actual data.
+
+\subsection{System Catalogue}
+\tab System catalogue is a file that stores metadata, data about the actual data. The abstraction of the database has been carried out by the system catalogue. The user must first acces into this file before making an operation in the database. The system catalogue consists of only one page which holds the records consisting of the abstraction of the data within the files. 
+
+\begin{itemize}
+    \item System Catalogue Header 
+        \begin{itemize}
+            \item Name of The Database: 16 Bytes
+            \item \# of Files: 4 Bytes
+            \item Pointer to The First File: 4 Bytes
+        \end{itemize}
+        24 Bytes
+        
+        \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            Name of The Database & \# of Files & Pointer to The First File \\
+            \hline
+        \end{tabular}
+        \end{center}
+    
+    \item System Catalogue Content \newline
+    The system catalogue consists of a single page which holds the records corresponding to the abstraction of each prospected files to be created in case of necessity. The content of each record is as follows:
+    
+        \begin{itemize} 
+            \item File Name: 16 Bytes
+            \item Type Names: 16 Bytes
+            \item Field Names: 16x10 = 160 Bytes
+            \item The Name of The Primary Key:16 Bytes
+            \item \# of Free Bytes Within The Page: 4 Bytes
+        \end{itemize}
+    
+    212 Bytes Per Record 
+        
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{File Name}   & \multicolumn{1}{l|}{\textbf{Type Names}} & \multicolumn{1}{l|}{\textbf{Field Names}} &  \multicolumn{1}{l|}{\textbf{Primary Key}} & \multicolumn{1}{l|}{\textbf{Free Bytes}} \\ \hline
+\textbf{FileA} & TypeA & \begin{tabular}{|c|c|c|}
+                \hline
+                FieldA\#1 & . & FieldA\#10\\
+                \hline
+            \end{tabular}                  & KeyA & \#A                                    \\ \hline
+\textbf{FileB} & TypeB & \begin{tabular}{|c|c|c|}
+                \hline
+                FieldB\#1 & . & FieldB\#10\\
+                \hline
+            \end{tabular}                  & KeyB & \#B                                    \\ \hline
+\textbf{FileC} & TypeC & \begin{tabular}{|c|c|c|}
+                \hline
+                FieldC\#1 & . & FieldC\#10\\
+                \hline
+            \end{tabular}                  & KeyC & \#C                                    \\ \hline
+\end{tabular}
+\label{tab:example}
+\caption{The Structure of The System Catalogue}
+\end{table}
+
+\clearpage
+\subsection{Data Storage Units}
+\begin{enumerate}
+    \item Files: 36448 Bytes
+        \begin{itemize}
+            \item File Header: 48 Bytes
+            \begin{itemize}
+                \item File Name: 16 Bytes
+                \item Type Name: 16 Bytes
+                \item \# of Pages: 4 Bytes
+                \item \# of Free Bytes: 4 Bytes
+                \item Pointer to the First Page: 4 Bytes
+                \item Pointer to the Next File: 4 Bytes
+            \end{itemize}
+            
+            \begin{tabular}{|c|c|c|c|c|c|}
+                \hline
+                File Name & Type Name & \# of Pages & \# of Free Bytes & First Page & Next File \\
+                \hline
+            \end{tabular}
+            \\
+            \item File Content: A file contains maximum 20 pages.
+            \begin{center}
+            20x1820 = 36400 Bytes per File
+            \end{center}
+        \begin{center}
+                \begin{tabular}{|c|}
+                    \hline
+                    Page \#1 \\
+                    \hline
+                    Page \#2 \\
+                    \hline
+                    .. \\
+                    \hline
+                    Page \#20 \\
+                    \hline
+                \end{tabular}
+                \end{center}
+
+        \end{itemize}
+        
+        
+        
+    \item Pages: 1820 Bytes
+        \begin{itemize}
+            \item Page Header: 20 Bytes
+                \begin{itemize}
+                    \item Page ID: 4 Bytes
+                    \item \# of Records: 4 Bytes
+                    \item \# of Free Bytes: 4 Bytes
+                    \item Pointer to the First Record: 4 Bytes
+                    \item Pointer to the Next Page: 4 Bytes
+                \end{itemize}
+                \begin{center}
+                    \begin{tabular}{|c|c|c|c|c|}
+                        \hline
+                        Page ID & \# of Records & \# of Free Bytes & First Record & Next Page \\
+                        \hline
+                    \end{tabular}
+                    \end{center}
+                
+            \item Page Content: A page contains maximum 25 records.
+            \begin{center}
+            25x72 = 1800 Bytes per Page
+            \end{center}
+        \end{itemize}
+        
+        \begin{center}
+                \begin{tabular}{|c|}
+                    \hline
+                    Record \#1 \\
+                    \hline
+                    Record \#2 \\
+                    \hline
+                    .. \\
+                    \hline
+                    Record \#25 \\
+                    \hline
+               
+                \end{tabular}
+                \end{center}
+                
+        \item Records: 72 Bytes
+        \begin{itemize}
+            \item Record Header: 32 Bytes
+            \begin{itemize}
+                \item Primary Key (Record ID): 4 Bytes
+                \item Type Name: 16 Bytes
+                \item \# of Fields: 4 Bytes
+                \item \# of Free Bytes: 4 Bytes
+                \item Pointer to the Next Record: 4 Bytes
+            \end{itemize}
+            \begin{center}
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                Primary Key & Type Name &  \# of Fields & \# of Free Bytes & Next Record \\
+                \hline
+            \end{tabular}
+            \end{center}
+            \item Record Content: A record contains maximum 10 records.
+            \begin{center}
+            10x4 = 40 Bytes per Record
+            \end{center}
+            \begin{center}
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                Field\#1 & Field\#2 & ... & Field\#10 \\
+                \hline
+            \end{tabular}
+            \end{center}
+            
+        \end{itemize}
+        
+    
+\end{enumerate}
+\clearpage
+
+\section{\large Operations}
+\subsection{DDL Operations}
+DDL stands for the abbreviation of Data Definition Language which consists of the operations that are used to make creations,deletions,modifications, etc. on the database schema.
+
+\subsubsection{Create a Type}
+
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+\If{systemCatalogue.header.numOfFiles < 20}{
+declare newType \\
+//initialize the fields of the newType \\
+newType.typeName  $\leftarrow$ input \\
+newType.primaryKey  $\leftarrow$ input \\
+newType.numOfFields  $\leftarrow$ input \\
+\For{i = 1 to newType.numOfFields}{
+    newType.field\#i $\leftarrow$ input 
+}
+systemCatalogue.types.insert(newType) \\
+systemCatalogue.numOfFiles++
+}
+\Else{
+    System.out.println("You have reached the maximum number of types!") \\
+    break
+}
+\caption{Create a Type}
+\end{algorithm}
+
+
+\subsubsection{Delete a Type}
+
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+typeName  $\leftarrow$ input \\
+listOfIndices $\leftarrow$ getList(typeName) \\
+\If{listOfIndices.size() == 0}{
+System.out.println("Type Not Found!") \\
+break
+}
+\Else{
+\For{i = listOfIndices.size() to 1}{
+    index  $\leftarrow$ listOfIndices[i-1] \\
+    systemCatalogue.types.remove(index) \\
+    systemCatalogue.header.numOfFiles$--$ \\
+    systemCatalogue.files.delete(typeName\#i)\\
+}
+}
+\caption{Delete a Type}
+\end{algorithm}
+
+\subsubsection{List All Types}
+
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+\If{systemCatalogue.header.numOfFiles == 0}{
+System.out.println("No Types Exist!") \\
+break
+}
+\Else{
+numOfFiles $\leftarrow$ systemCatalogue.header.numOfFiles \\
+\For{i = 1 to numOfFiles}{
+curLine  $\leftarrow$ "systemCatalogue.txt".nextLine \\
+print curLine[1]
+}
+}
+\caption{List All Types}
+\end{algorithm}
+\clearpage
+
+\subsection{DML Operations}
+DML stands for the abbreviation of Data Manipulation Language which consists of the operations that are used to make creations,deletions,modifications,etc. on the data itself.
+\subsubsection{Create a Record}
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+\SetNlSty{texttt}{}{:}
+declare newRecord \\
+newRecord.content.typeName  $\leftarrow$ input \\
+newRecord.content.numOfFields$\leftarrow$systemCatalogue.getNumOfFields(typeName)\\
+\For{i = 1 to newRecord.numOfFields}{
+newRecord.field\#i $\leftarrow$ input
+}
+
+\If{systemCatalogue.header.numOfFiles == 0}{
+newFile  $\leftarrow$ new File("newRecord.content.typeName\#i.txt") \\
+newPage $\leftarrow$ new Page(), newPage.records.add(newRecord) \\
+newPage.numOfRecords++\\
+newFile.pages.add(newPage), newFile.numOfPages++ \\
+systemCatalogue.files.add(newFile),systemCatalogue.numOfFiles++
+}
+\Else{
+    curFile $\leftarrow$ systemCatalogue.header.firstFile \\
+    \While{curFile.nextFile != NULL}{
+    \If{curFile.getType().equals(newRecord.typeName)\&\&curFile.numOfFreeBytes != 0}{
+       \ForEach{curPage in curFile}{
+            \ForEach{curRecord in curPage}{
+                \If{curRecord == NULL}{
+                    curRecord $\leftarrow$ newRecord, curPage.numOfRecords++ \\
+                    return
+                }
+            }
+        }
+    }
+    }
+    \If{systemCatalogue.numOfFiles < 20}{
+        newFile  $\leftarrow$ new File("newRecord.content.typeName\#i.txt") \\
+        newPage $\leftarrow$ new Page(), newPage.records.add(newRecord) \\ 
+        newPage.numOfRecords++\\
+        newFile.pages.add(newPage), newFile.numOfPages++ \\
+        systemCatalogue.files.add(newFile),systemCatalogue.numOfFiles++
+    }
+    \Else{
+        System.out.println("Not Enough Space!")
+    }
+
+}
+ 
+\caption{Create a Record}
+\end{algorithm}
+\vfill
+
+
+\subsubsection{Delete a Record}
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+primaryKey  $\leftarrow$ input \\
+typeName  $\leftarrow$ input \\
+\If{systemCatalogue.header.numOfFiles == 0}{
+System.out.println("No Records Exist!"), break
+}
+\Else{
+curFile $\leftarrow$ systemCatalogue.header.firstFile \\
+\While{true}{
+    \While{!curFile.typeName.equals(typeName)}{
+        \If{curFile.nextFile != NULL}{
+            curFile $\leftarrow$ curFile.nextFile
+        }
+        \Else{
+            return
+        }
+    }
+    \ForEach{curPage in curFile}{
+    \ForEach{curRecord in curPage}{
+        \If{curRecord.primaryKey == primaryKey}{
+            curPage.numOfRecords$--$ \\
+            curRecord = NULL\\
+            \If{curPage.numOfRecords == 0}{
+                curFile.pages.remove(curPage) \\
+                curFile.numOfPages$--$ \\
+                \If{curFile.numOfPages == 0}{
+                    systemCatalogue.files.remove(curFile)\\
+                    systemCatalogue.header.numOfFiles$--$
+                }
+            }
+            return
+        }
+    }
+}
+curFile $\leftarrow$ curFile.nextFile
+}
+}
+\caption{Delete a Record}
+\end{algorithm}
+
+\subsubsection{Search for a Record}
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+primaryKey  $\leftarrow$ input \\
+typeName  $\leftarrow$ systemCatalogue.getTypeName(primaryKey) \\
+curFile $\leftarrow$ systemCatalogue.header.firstFile \\
+\While{true}{
+    \While{!curFile.typeName.equals(typeName)}{
+        \If{curFile.nextFile != NULL}{
+            curFile $\leftarrow$ curFile.nextFile \\
+        }
+        \Else{
+            return
+        }
+    }
+    \ForEach{curPage in curFile}{
+    \ForEach{curRecord in curPage}{
+        \If{curRecord.primaryKey == primaryKey}{
+            return curRecord
+        }
+    }
+    
+
+}
+curFile $\leftarrow$ curFile.nextFile
+}
+\caption{Search a Record (by Primary Key)}
+\end{algorithm}
+
+\subsubsection{Update a Record}
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+primaryKey  $\leftarrow$ input \\
+isFoun $\leftarrow$ false
+\If{systemCatalogue.header.numOfFiles == 0}{
+    System.out.println("No records exist!")
+    return
+}
+\Else{
+\While{isFound==false}{
+    \While{!curFile.typeName.equals(typeName)}{
+        \If{curFile.nextFile != NULL}{
+            curFile $\leftarrow$ curFile.nextFile
+        }
+        \Else{
+            return
+        }
+    }
+    \ForEach{curPage in curFile}{
+        \ForEach{curRecord in curPage}{
+            \If{curRecord.primaryKey == primaryKey}{
+                updatedRecord $\leftarrow$ curRecord \\
+                isFound $\leftarrow$ true
+            }
+        }
+    }
+    \If{isFound == false}{
+    curFile $\leftarrow$ curFile.nextFile
+    continue
+    }
+}
+numOfFields $\leftarrow$ updatedRecord.numOfFields \\
+\For{i=1 to numOfFields}{
+    updatedRecord.field\#i $\leftarrow$ input \\
+}
+}
+\caption{Update a Record (by Primary Key)}
+\end{algorithm}
+
+\subsubsection{List All Records of A Type}
+\begin{algorithm}[H]
+\SetNlSty{texttt}{}{:}
+typeName  $\leftarrow$ input \\
+\If{systemCatalogue.header.numOfFiles == 0}{
+    System.out.println("No Records Exist!")\\
+    return
+}
+\Else{
+    curFile $\leftarrow$ systemCatalogue.header.firstFile \\
+    \While{curFile.nextFile != NULL}{
+        \If{curFile.typeName.equals(typeName)}{
+            \ForEach{curPage in curFile}{
+                \ForEach{curRecord in curPage}{
+                    printRecord(curRecord)\\
+                }
+            }
+        }
+    }
+}
+\caption{List All Records of A Type}
+\end{algorithm}
+\clearpage
+
+\section{\large Conclusion \& Assessment}
+\begin{itemize}
+    \item A well designed storage manager allows a reliable database storage, efficient operations, and secure access into the database. In this project, the design of the storage manager that will later be implemented has been provided.
+    \item The content of the storage structures have been designed in order to enable a better view before implementation. By the time the implementation has been proceeded, some unnecessary fields or uses might be detected that will later be removed or improved in a way that space and time complexity trade-off better-offs.
+    \item For further explanation, the way the content of the storage structures designed enabled an easier design, but this approach might cause some inefficient solutions in the implementation section due to the fact that the use of memory increases.
+    \item The files containing a single type of record allow the administrators to easily handle the storage of the data by providing a simple and efficient abstraction of data.
+    \item The \# of Free Bytes use is a preferred usage in practice. However, to avoid any unnecessary complexity in the report, the values of these fields have not been updated inside the pseudo-codes of the operations.
+\end{itemize}
+
+PS: Due to the restrictions caused by the use of algorithm block in LaTeX, a blank page has been automatically generated when the page size has not been enough for the algorithm block.
+
+\end{document}
