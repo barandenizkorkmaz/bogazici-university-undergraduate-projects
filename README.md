@@ -1,4 +1,4 @@
-# Boğaziçi University Undergraduate Projects
+# Boğaziçi University Undergraduate Projects :mortar_board:
 ### :star: Please give a star and support my work on GitHub.
 This repository includes my undergraduate projects at Boğaziçi University.
 
