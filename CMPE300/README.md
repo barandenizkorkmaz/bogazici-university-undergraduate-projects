@@ -29,7 +29,7 @@ mpirun -np [M] --oversubscribe ./main [Input.txt] [Output.txt] [T]
 #[T]: The number of Iterations.
 
 # Exp: Run it with 5 processors (1 master, 4 worker processors):
-mpirun --oversubscribe -np 5 ./main rand.txt randout.txt 20
+mpirun -np 5 --oversubscribe ./main rand.txt randout.txt 20
 ```
 
 ### [Version 2: Checkered](/CMPE300/Checkered) `Python`
@@ -43,5 +43,5 @@ mpirun -np [M] --oversubscribe python3 2015400183.py [Input.txt] [Output.txt] [T
 #[T]: The number of Iterations.
 
 # Exp: Run it with 145 processors (1 master, 144 worker processors):
-mpirun --oversubscribe -np 145 python3 2015400183.py ./main gliders.txt glidersout.txt 30
+mpirun -np 145 --oversubscribe python3 2015400183.py ./main gliders.txt glidersout.txt 30
 ```
