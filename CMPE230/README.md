@@ -7,4 +7,4 @@
 ### [Project 2](/CMPE230/Project2) `Python 3`
 ### [Project 3](/CMPE230/Project3) `Qt / C++`
 
-Special thanks to my colleague and best friend to Doğukan Kalkan, who was my partner for CMPE230 term projects.
+Special thanks to my colleague and best friend Doğukan Kalkan, who was my partner for CMPE230 term projects.
