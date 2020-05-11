@@ -35,7 +35,7 @@ mpirun -np 5 --oversubscribe ./main rand.txt randout.txt 20
 ### [Version 2: Checkered](/CMPE300/Checkered) `Python`
 ```bash
 # To run the program: Make sure that the necessary packages which are math, numpy,and mpi4py are provided.
-mpirun -np [M] --oversubscribe python3 2015400183.py [Input.txt] [Output.txt] [T]
+mpirun -np [M] --oversubscribe python3 main.py [Input.txt] [Output.txt] [T]
 
 #[M]: Number of Processors
 #[Input.txt]: The input file.
@@ -43,5 +43,5 @@ mpirun -np [M] --oversubscribe python3 2015400183.py [Input.txt] [Output.txt] [T
 #[T]: The number of Iterations.
 
 # Exp: Run it with 145 processors (1 master, 144 worker processors):
-mpirun -np 145 --oversubscribe python3 2015400183.py ./main gliders.txt glidersout.txt 30
+mpirun -np 145 --oversubscribe python3 main.py ./main gliders.txt glidersout.txt 30
 ```
