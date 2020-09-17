@@ -36,6 +36,21 @@ This repository includes my undergraduate projects at Boğaziçi University.
 
 ### [CMPE352 & CMPE451 - Project Development in Software Engineering](https://github.com/bounswe/bounswe2019group6)
 
+### [CMPE462 - Machine Learning](/CMPE462)
+- [Project 1](/CMPE462/Projects/Project1) `Python 3`
+- [Project 2](/CMPE462/Projects/Project2) `Python 3`
+- [Project 3](/CMPE462/Projects/Project3) `Python 3`
+- [Mini Project: Regression Tree](/CMPE462/Mini-Project/Regression-Tree) `Python 3`
+
+### [CMPE478 - Parallel Processing](/CMPE478)
+- [Project 1](/CMPE478/Project1) `C++/OpenMP`
+- [Project 2](/CMPE478/Project2) `C++/OpenMPI`
+
+### [IE306 - Systems Simulation](/IE306)
+- [Project 1](/IE306/Project1) `Python 3`
+- [Project 2](/IE306/Project2) `R`
+- [Project 3](/IE306/Project3) `ARENA`
+
 ### [IE310 - Operations Research](/IE310)
 - [GAMS Modeling](/IE310) `Gams`
 
