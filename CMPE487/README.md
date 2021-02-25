@@ -3,7 +3,7 @@
 | --- | --- |
 | Fall 2020  | Eren Soyak |
 
-### [Workshop 1](/CMPE487/Workshop1:\ Netcat\ Chat/) `Python 3`
+### [Workshop 1: Netcat Chat](https://github.com/barandenizkorkmaz/bogazici-university-undergraduate-projects/tree/master/CMPE487/Workshop1:%20Netcat%20Chat) `Python 3`
 ### [Workshop 2: PyChat](/CMPE487/Workshop2: PyChat/) `Python 3`
 ### [Workshop 3: Zeroconf](/CMPE487/Workshop3: Zeroconf/) `Python 3`
 ### [Workshop4: Social Torrent](/CMPE487/Workshop4: Social Torrent/) `Python 3`
