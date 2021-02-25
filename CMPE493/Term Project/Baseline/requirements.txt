@@ -1,0 +1,12 @@
+click==7.1.2
+joblib==1.0.0
+nltk==3.5
+numpy==1.19.4
+pkg-resources==0.0.0
+pyenchant==3.2.0
+regex==2020.11.13
+scikit-learn==0.24.0
+scipy==1.5.4
+sklearn==0.0
+threadpoolctl==2.1.0
+tqdm==4.55.1

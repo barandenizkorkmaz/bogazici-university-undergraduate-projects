@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BULOT</title>
+
+  <script>
+    var hashHelperAddress = "0x2bAA286Df30b245F8F92C81fAd8f20122df0572d";
+    var bulotAddress = "0xefa425068E7FBc26Fb40dA473428CEE9C9D9dB45";
+    var erc20Address = "0xF9b8bEb766Fac4E453e4a85d8d464f089aD63f7A";
+    var hasherAbi = [
+      {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "stateMutability": "nonpayable",
+        "type": "fallback"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "randomNumber",
+            "type": "uint256"
+          }
+        ],
+        "name": "getHash",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "hashValue",
+            "type": "bytes32"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ];
+
+    var bulotAbi = [
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "conaddr",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "stateMutability": "nonpayable",
+        "type": "fallback"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "hash_rnd_number",
+            "type": "bytes32"
+          }
+        ],
+        "name": "buyTicket",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ticket_no",
+            "type": "uint256"
+          }
+        ],
+        "name": "checkIfTicketWon",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "contractaddr",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getCurrentLotteryNo",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "i",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          }
+        ],
+        "name": "getIthBoughtTicketNo",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "i",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          }
+        ],
+        "name": "getIthWinningTicket",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "ticket_no",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          }
+        ],
+        "name": "getLastBoughtTicketNo",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          }
+        ],
+        "name": "getMoneyCollected",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "ticketno",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rnd_number",
+            "type": "uint256"
+          }
+        ],
+        "name": "revealRndNumber",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "lottery_no",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ticket_no",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdrawTicketPrize",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ];
+    var erc20Abi = [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_initialAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_tokenName",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "_decimalUnits",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "_tokenSymbol",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "Approval",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "Transfer",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "_spender",
+            "type": "address"
+          }
+        ],
+        "name": "allowance",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "remaining",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "allowed",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_spender",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_value",
+            "type": "uint256"
+          }
+        ],
+        "name": "approve",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "success",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_owner",
+            "type": "address"
+          }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "balance",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "balances",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [
+          {
+            "internalType": "uint8",
+            "name": "",
+            "type": "uint8"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_to",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_value",
+            "type": "uint256"
+          }
+        ],
+        "name": "transfer",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "success",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_from",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "_to",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_value",
+            "type": "uint256"
+          }
+        ],
+        "name": "transferFrom",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "success",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ];
+
+    var accounts = [];
+
+    window.addEventListener('load', async () => {
+      // Modern dapp browsers...
+      if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        try {
+          await ethereum.enable();
+          accounts= await web3.eth.getAccounts();
+          console.log( 'Accs: ' + accounts);
+        } catch (error) {
+          // User denied account access...
+        }
+      }
+      // Legacy dapp browsers...
+      else if (window.web3) {
+        window.web3 = new Web3(web3.currentProvider);
+        // Acccounts always exposed
+      }
+      // Non-dapp browsers...
+      else {
+        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+      }
+    });
+
+    var account = accounts[0];
+    var hashNetwork = web3.eth.contract(hasherAbi).at(hashHelperAddress);
+    var bulotNetwork = web3.eth.contract(bulotAbi).at(bulotAddress);
+    var erc20Network = web3.eth.contract(erc20Abi).at(erc20Address);
+
+    function transfer(){
+      var targetAddress = document.getElementById('transferTargetAddressForm').value.toString();
+      var amount = document.getElementById('transferAmountForm').value.toString();
+      erc20Network.transfer(targetAddress,amount,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('transferResult').innerText = "Transaction hash value: " + stat;
+        }
+        else {
+          document.getElementById('transferResult').innerText = "Transaction hash value: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+
+    function transferFrom(){
+      var sourceAddress = document.getElementById('transferFromSourceAddressForm').value.toString();
+      var targetAddress = document.getElementById('transferFromTargetAddressForm').value.toString();
+      var amount = document.getElementById('transferFromAmountForm').value.toString();
+      erc20Network.transferFrom(sourceAddress,targetAddress,amount,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('transferFromResult').innerText = "Transaction hash value: " + stat;
+        }
+        else {
+          document.getElementById('transferFromResult').innerText = "Transaction hash value: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+
+    function balanceOf(){
+      var owner = document.getElementById('balanceOfForm').value.toString();
+      erc20Network.balanceOf(owner,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('balanceOfResult').innerText = "Balance: " + stat;
+        }
+        else {
+          document.getElementById('balanceOfResult').innerText = "Error: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+
+    function approve(){
+      var spender = document.getElementById('approveSpenderForm').value.toString();
+      var amount = document.getElementById('approveAmountForm').value.toString();
+      erc20Network.approve(spender,amount,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('approveResult').innerText = "Transaction hash value: " + stat;
+        }
+        else {
+          document.getElementById('approveResult').innerText = "Transaction hash value: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+
+    function allowance(){
+      var owner = document.getElementById('allowanceOwnerForm').value.toString();
+      var spender = document.getElementById('allowanceSpenderForm').value.toString();
+      erc20Network.allowance(owner,spender,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('allowanceResult').innerText = "Allowance: " + stat;
+        }
+        else {
+          document.getElementById('allowanceResult').innerText = "Error: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+    
+    function getHashValue(){
+      var number = document.getElementById('hashNumForm').value.toString();
+      hashNetwork.getHash(number,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('hashNumResult').innerText = "Hash: " + stat;
+        }
+        else {
+          document.getElementById('hashNumResult').innerText = "Error: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+
+    function getIthBoughtTicketNo() {
+      var ticketNo = document.getElementById('getIthBoughtTicketNoIForm').value.toString();
+      var lotteryNo = document.getElementById('getIthBoughtTicketNoLotteryNoForm').value.toString();
+      bulotNetwork.getIthBoughtTicketNo(ticketNo, lotteryNo, account, function (error, result) {
+        if (!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('getIthBoughtTicketNoResult').innerText = "Ticket No: " + stat;
+        }
+        else {
+          document.getElementById('getIthBoughtTicketNoResult').innerText = "Error: Please enter a valid lottery number or a valid ticket number.";
+          console.error(error);
+        }
+      });
+    }
+
+    function getCurrentLotteryNum() {
+      bulotNetwork.getCurrentLotteryNo(account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('getCurrentLotteryNum').innerText = "Lottery No: " + stat;
+        }
+        else {
+          document.getElementById('getCurrentLotteryNum').innerText = "Error: " + error.toString();
+          console.error(error);
+        }
+      });
+    }
+
+    function withdrawTicketPrize() {
+      var lotteryNo = document.getElementById('withdrawTicketLotteryNoForm').value;
+      var ticketNo = document.getElementById('withdrawTicketTicketNoForm').value;
+      bulotNetwork.withdrawTicketPrize(lotteryNo, ticketNo, account, function (error, result) {
+        if (!error) {
+          document.getElementById('withdrawTicketPrizeResult').innerText = "Lottery No: " + result[0] + "\nTicket No: " + result[1];
+        }
+        else {
+          document.getElementById('withdrawTicketPrizeResult').innerText = "Error: Invalid lottery number or the prize for this ticket has already been withdrawn.";
+          console.error(error);
+        }
+      });
+    }
+
+    function revealRandom() {
+      var rndNo = document.getElementById('revealRandomRndNumberForm').value;
+      var ticketNo = document.getElementById('revealRandomTicketNoForm').value;
+      bulotNetwork.revealRndNumber(ticketNo, rndNo, account, function (error, result) {
+        if (!error) {
+          var stat = JSON.stringify(result);
+          document.getElementById('revealRandomResult').innerText = "Success: " + stat;
+        }
+        else {
+          document.getElementById('revealRandomResult').innerText = "Error: Check your ticketno and random number or this ticket has already been revealed.";
+          console.error(error);
+        }
+      });
+    }
+
+    function buyTicket() {
+      var hash = document.getElementById('buyTicketForm').value;
+      bulotNetwork.buyTicket(hash,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          console.log(result)
+          document.getElementById('buyTicketResult').innerText = "Success: " + stat;
+        }
+        else {
+          console.error(error);
+          document.getElementById('buyTicketResult').innerText = "Error: Please allow for money transfer in ERC20Token contract.";
+        }
+      });
+
+    }
+
+    function checkIfTicketWon() {
+      var lotteryNo = document.getElementById('checkIfTicketWonLotteryNoForm').value;
+      var ticketNo = document.getElementById('checkIfTicketWonTicketNoForm').value;
+      bulotNetwork.checkIfTicketWon(lotteryNo, ticketNo, account, function (error, result) {
+        if (!error) {
+          var stat = JSON.stringify(result);
+          console.log(result)
+          document.getElementById('checkIfTicketWonResult').innerText = "Amount: " + stat;
+        }
+        else {
+          document.getElementById('checkIfTicketWonResult').innerText = "Error: Please enter a valid lottery number or enter a ticket number that you are authorized.";
+          console.error(error);
+        }
+      });
+    }
+
+    function getLastBoughtTicketNo() {
+      var lotteryNo = document.getElementById('getLastBoughtTicketNoLotteryNoForm').value;
+      bulotNetwork.getLastBoughtTicketNo(lotteryNo, account, function (error, result) {
+        if (!error) {
+          var stat = JSON.stringify(result);
+          console.log(result)
+          document.getElementById('getLastBoughtTicketNoResult').innerText = "Ticket No: " + stat;
+        }
+        else {
+          document.getElementById('getLastBoughtTicketNoResult').innerText = "Error: Please enter a valid lottery number or you might have not purchased any tickets currently.";
+          console.error(error);
+        }
+      });
+    }
+
+    function getIthWinningTicket() {
+      var priceNo = document.getElementById('getIthWinningTicketIForm').value;
+      var lotteryNo = document.getElementById('getIthWinningTicketLotteryNoForm').value;
+      bulotNetwork.getIthWinningTicket(priceNo, lotteryNo, account, function (error, result) {
+        if (!error) {
+          console.log(result)
+          document.getElementById('getIthWinningTicketResult').innerText = "Ticket No: " + result[0] + "\nAmount: " + result[1];
+        }
+        else {
+          document.getElementById('getIthWinningTicketResult').innerText = "Error: Please enter a valid lottery number or a valid prize index.";
+          console.error(error);
+        }
+      });
+    }
+
+    function getMoneyCollected() {
+      var lotteryNo = document.getElementById('getMoneyCollectedForm').value;
+      bulotNetwork.getMoneyCollected(lotteryNo,account,function(error,result){
+        if(!error) {
+          var stat = JSON.stringify(result);
+          console.log(result)
+          document.getElementById('getMoneyCollectedResult').innerText = "Money: " + stat;
+        }
+        else {
+          console.error(error);
+          document.getElementById('getMoneyCollectedResult').innerText = "Error: " + error.toString();
+        }
+      });
+
+    }
+  </script>
+</head>
+<body>
+
+<h1>BULOT Lottery</h1>
+
+
+<div id="adressBar"></div>
+<h2>ERC20 Token Contract</h2>
+
+<div>
+  <h3>transfer</h3>
+  <form>
+    <p> To: <textarea id="transferTargetAddressForm" rows="1" cols="75"></textarea> </p>
+    <p> Amount: <textarea id="transferAmountForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="transfer()">transfer</button>
+  <div id="transferResult"></div>
+</div>
+
+<div>
+  <h3>transferFrom</h3>
+  <form>
+    <p> From: <textarea id="transferFromSourceAddressForm" rows="1" cols="75"></textarea> </p>
+    <p> To: <textarea id="transferFromTargetAddressForm" rows="1" cols="75"></textarea> </p>
+    <p> Amount: <textarea id="transferFromAmountForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="transferFrom()">transferFrom</button>
+  <div id="transferFromResult"></div>
+</div>
+
+<div>
+  <h3>balanceOf</h3>
+  <form>
+    <p> Owner: <textarea id="balanceOfForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="balanceOf()">balanceOf</button>
+  <div id="balanceOfResult"></div>
+</div>
+
+<div>
+  <h3>approve</h3>
+  <form>
+    <p> Spender: <textarea id="approveSpenderForm" rows="1" cols="75"></textarea> </p>
+    <p> Amount: <textarea id="approveAmountForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="approve()">approve</button>
+  <div id="approveResult"></div>
+</div>
+
+<div>
+  <h3>allowance</h3>
+  <form>
+    <p> Owner: <textarea id="allowanceOwnerForm" rows="1" cols="75"></textarea> </p>
+    <p> Spender: <textarea id="allowanceSpenderForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="allowance()">allowance</button>
+  <div id="allowanceResult"></div>
+</div>
+
+<hr>
+
+<h2>HashHelper Contract</h2>
+
+<div>
+  <h3>getHash</h3>
+  <form>
+    <p> randomNumber: <textarea id="hashNumForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="getHashValue()">getHash</button>
+  <div id="hashNumResult"></div>
+</div>
+<hr>
+
+<h2>BULOT Contract</h2>
+
+<div>
+  <h3>buyTicket</h3>
+  <form>
+    <p> hash_rnd_number: <textarea id="buyTicketForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="buyTicket()">buyTicket</button>
+  <div id="buyTicketResult"></div>
+</div>
+
+<div>
+  <h3>revealRandomNumber</h3>
+  <form>
+    <p> ticketno: <textarea id="revealRandomTicketNoForm" rows="1" cols="75"></textarea> </p>
+    <p> rnd_number: <textarea id="revealRandomRndNumberForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="revealRandom()">revealRandomNumber</button>
+  <div id="revealRandomResult"></div>
+</div>
+
+<div>
+  <h3>withdrawTicketPrize</h3>
+  <form>
+    <p> lottery_no: <textarea id="withdrawTicketLotteryNoForm" rows="1" cols="75"></textarea> </p>
+    <p> ticket_no: <textarea id="withdrawTicketTicketNoForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="withdrawTicketPrize()">withdrawTicketPrize</button>
+  <div id="withdrawTicketResult"></div>
+</div>
+
+<div>
+  <h3>checkIfTicketWon</h3>
+  <form>
+    <p> lottery_no: <textarea id="checkIfTicketWonLotteryNoForm" rows="1" cols="75"></textarea> </p>
+    <p> ticket_no: <textarea id="checkIfTicketWonTicketNoForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="checkIfTicketWon()">checkIfTicketWon</button>
+  <div id="checkIfTicketWonResult"></div>
+</div>
+
+<div>
+  <h3>getCurrentLotteryNo</h3>
+  <button onclick="getCurrentLotteryNum()">getCurrentLotteryNo</button>
+  <div id="getCurrentLotteryNum"></div>
+</div>
+
+<div>
+  <h3>getIthBoughtTicketNo</h3>
+  <form>
+    <p> i: <textarea id="getIthBoughtTicketNoIForm" rows="1" cols="75"></textarea> </p>
+    <p> lottery_no: <textarea id="getIthBoughtTicketNoLotteryNoForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="getIthBoughtTicketNo()">getIthBoughtTicketNo</button>
+  <div id="getIthBoughtTicketNoResult"></div>
+</div>
+
+<div>
+  <h3>getLastBoughtTicketNo</h3>
+  <form>
+    <p> lottery_no: <textarea id="getLastBoughtTicketNoLotteryNoForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="getLastBoughtTicketNo()">getLastBoughtTicketNo</button>
+  <div id="getLastBoughtTicketNoResult"></div>
+</div>
+
+<div>
+  <h3>getIthWinningTicket</h3>
+  <form>
+    <p> i: <textarea id="getIthWinningTicketIForm" rows="1" cols="75"></textarea> </p>
+    <p> lottery_no: <textarea id="getIthWinningTicketLotteryNoForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="getIthWinningTicket()">getIthWinningTicket</button>
+  <div id="getIthWinningTicketResult"></div>
+</div>
+
+<div>
+  <h3>getMoneyCollected</h3>
+  <form>
+    <p> lottery_no: <textarea id="getMoneyCollectedForm" rows="1" cols="75"></textarea> </p>
+  </form>
+  <button onclick="getMoneyCollected()">getMoneyCollected</button>
+  <div id="getMoneyCollectedResult"></div>
+</div>
+
+</body>
+</html>
