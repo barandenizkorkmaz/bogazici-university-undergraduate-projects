@@ -7,8 +7,8 @@
 ### [Project 2](/CMPE493/Project2) `Python 3`
 ### [Project 3](/CMPE493/Project3) `Python 3`
 ### [Project 4](/CMPE493/Project4) `Python 3`
-### [Term Project: Baseline](/CMPE493/Term Project/Baseline) `Python 3`
-### [Term Project: Final](/CMPE493/Term Project/Final) `Python 3`
+### [Term Project: Baseline](https://github.com/barandenizkorkmaz/bogazici-university-undergraduate-projects/tree/master/CMPE493/Term%20Project/Baseline) `Python 3`
+### [Term Project: Final](https://github.com/barandenizkorkmaz/bogazici-university-undergraduate-projects/tree/master/CMPE493/Term%20Project/Final) `Python 3`
 
 My sincere thanks to dear professor Arzucan Özgür for inspirational efforts, endeavour and patience.
 
