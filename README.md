@@ -1,6 +1,5 @@
-# Boğaziçi University Undergraduate Projects :mortar_board:
-### :star: Please give me a star if you find the content useful.
-This repository includes my undergraduate projects in Computer Engineering department at Boğaziçi University.
+# Boğaziçi University B.Sc. Computer Engineering - Curricular Projects :mortar_board:
+This repository contains the curricular projects that I have done during my undergraduate studies in the department of Computer Engineering at Boğaziçi University, Istanbul.
 
 ### [CMPE230 - Systems Programming](/CMPE230)
 - [Project 1](/CMPE230/Project1) `C++`
