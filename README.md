@@ -1,6 +1,14 @@
 # Boğaziçi University B.Sc. Computer Engineering - Curricular Projects :mortar_board:
 This repository contains the curricular projects that I have done during my undergraduate studies in the department of Computer Engineering at Boğaziçi University, Istanbul.
 
+### [CMPE150 - Introduction to Programming](/CMPE150)
+- [Project 1](/CMPE150/Project1) `Java`
+- [Project 2](/CMPE150/Project2) `Java`
+- [Project 3](/CMPE150/Project3) `Java`
+
+### [CMPE160 - Introduction to Object Oriented Programming](/CMPE160)
+- [Project 1](/CMPE160/Project1) `Java`
+
 ### [CMPE230 - Systems Programming](/CMPE230)
 - [Project 1](/CMPE230/Project1) `C++`
 - [Project 2](/CMPE230/Project2) `Python 3`
