@@ -8,6 +8,7 @@ This repository contains the curricular projects that I have done during my unde
 
 ### [CMPE160 - Introduction to Object Oriented Programming](/CMPE160)
 - [Project 1](/CMPE160/Project1) `Java`
+- [Project 2](/CMPE160/Project2) `Java`
 
 ### [CMPE230 - Systems Programming](/CMPE230)
 - [Project 1](/CMPE230/Project1) `C++`
