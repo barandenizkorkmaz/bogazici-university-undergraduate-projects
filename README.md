@@ -18,7 +18,7 @@ This repository contains the curricular projects that I have done during my unde
 ### [CMPE250 - Data Structures and Algorithms](/CMPE250)
 - [Project 1](/CMPE250/Project1) `C++`
 - [Project 3](/CMPE250/Project3) `C++`
-- [Project 4](/CMPE250/project4) `C++`
+- [Project 4](/CMPE250/Project4) `C++`
 - [Project 5](/CMPE250/Project5) `C++`
 
 ### [CMPE260 - Principles of Programming Languages](/CMPE260)
